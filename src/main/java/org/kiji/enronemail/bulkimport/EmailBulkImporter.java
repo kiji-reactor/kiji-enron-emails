@@ -24,8 +24,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 
@@ -73,10 +75,23 @@ public class EmailBulkImporter extends KijiBulkImporter<LongWritable, Text> {
     final String[] lines = message.toString().split("\n");
     int progress = 0;
     Map<String, String> headers = Maps.newHashMap();
-    while (progress < lines.length && lines[progress].contains(": ")) {
-      String[] fields = lines[progress].split(": ", 2);
+    Set<Character> headerContinueChars = Sets.newHashSet(' ', '\t');
+    while ((progress < lines.length) && (lines[progress].length()>0)) {
+      String[] fields = lines[progress].split(":", 2);
+
       if (fields.length == 2) {
-        headers.put(fields[0], fields[1]);
+        String key = fields[0];
+        String value = fields[1].trim();
+
+        // Look ahead for multi-line headers
+        while ((progress+1 < lines.length) && headerContinueChars.contains(lines[progress+1])) {
+          value = value + lines[progress+1];
+          progress++;
+        }
+
+        if (value.length() > 0) {
+          headers.put(key, value);
+        }
       }
       progress++;
     }
