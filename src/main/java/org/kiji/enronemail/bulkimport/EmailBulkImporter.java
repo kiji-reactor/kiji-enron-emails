@@ -102,7 +102,15 @@ public class EmailBulkImporter extends KijiBulkImporter<LongWritable, Text> {
       progress++;
     }
     String body = sb.toString();
-    
+    // Contract contractions.
+    body = body.replaceAll("'", "");
+
+    // Filter out any non-textual characters
+    body = body.replaceAll("\\W", " ");
+
+    // Compress whitespace
+    body = body.replaceAll(" +", " ");
+
     String messageId = headers.get("Message-ID");
     if (messageId.startsWith("<") && messageId.endsWith(">")) {
       messageId = messageId.substring(1, messageId.length()-2);
