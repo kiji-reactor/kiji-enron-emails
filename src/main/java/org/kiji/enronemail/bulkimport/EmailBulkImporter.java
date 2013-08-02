@@ -102,6 +102,7 @@ public class EmailBulkImporter extends KijiBulkImporter<LongWritable, Text> {
       progress++;
     }
     String body = sb.toString();
+    
     String messageId = headers.get("Message-ID");
     if (messageId.startsWith("<") && messageId.endsWith(">")) {
       messageId = messageId.substring(1, messageId.length()-2);

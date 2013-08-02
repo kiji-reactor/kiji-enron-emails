@@ -15,5 +15,8 @@ WITH LOCALITY GROUP default
     cc "string" WITH DESCRIPTION 'cc',
     bcc "string" WITH DESCRIPTION 'bcc',
     body "string" WITH DESCRIPTION 'Message body'
+  ),
+  FAMILY features WITH DESCRIPTION 'Derived features' (
+    sentiment "float" WITH DESCRIPTION 'sentiment score'
   )
 );
