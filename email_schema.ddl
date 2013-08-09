@@ -1,5 +1,5 @@
-CREATE TABLE emails WITH DESCRIPTION 'Enron  emails'
-ROW KEY FORMAT HASH PREFIXED(2)
+CREATE TABLE emails WITH DESCRIPTION 'Enron emails by user'
+ROW KEY FORMAT (from STRING, timestamp LONG)
 WITH LOCALITY GROUP default
   WITH DESCRIPTION 'Main locality group' (
   MAXVERSIONS = INFINITY,
@@ -8,7 +8,7 @@ WITH LOCALITY GROUP default
   COMPRESSED WITH GZIP,
   FAMILY info WITH DESCRIPTION 'Information about an email message' (
     mid "string" WITH DESCRIPTION 'Message-ID',
-    date "string" WITH DESCRIPTION 'Date',
+    date "long" WITH DESCRIPTION 'Date',
     from "string" WITH DESCRIPTION 'From',
     to "string" WITH DESCRIPTION 'To',
     subject "string" WITH DESCRIPTION 'Subject',

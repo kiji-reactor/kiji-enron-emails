@@ -1,6 +1,6 @@
 CREATE EXTERNAL TABLE emails (
   mid STRUCT<ts: TIMESTAMP, value: STRING>,
-  dateStr STRUCT<ts: TIMESTAMP, value: STRING>,
+  dateLong STRUCT<ts: TIMESTAMP, value: BIGINT>,
   fromStr STRUCT<ts: TIMESTAMP, value: STRING>,
   toStr STRUCT<ts: TIMESTAMP, value: STRING>,
   subject STRUCT<ts: TIMESTAMP, value: STRING>,

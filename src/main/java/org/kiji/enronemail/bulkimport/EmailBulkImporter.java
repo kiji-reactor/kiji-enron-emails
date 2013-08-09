@@ -23,6 +23,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
@@ -49,6 +53,8 @@ import org.kiji.schema.KijiURI;
  * your results.
  */
 public class EmailBulkImporter extends KijiBulkImporter<LongWritable, Text> {
+  private final static DateFormat DATE_FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z (z)");
+
   /** {@inheritDoc} */
   @Override
   public void setup(KijiTableContext context) throws IOException {
@@ -89,7 +95,8 @@ public class EmailBulkImporter extends KijiBulkImporter<LongWritable, Text> {
           progress++;
         }
 
-        if (value.length() > 0) {
+        // Only use the first occurance of a particular header.
+        if (value.length() > 0 && !headers.containsKey(key)) {
           headers.put(key, value);
         }
       }
@@ -101,6 +108,16 @@ public class EmailBulkImporter extends KijiBulkImporter<LongWritable, Text> {
       sb.append("\n");
       progress++;
     }
+
+    String dateStr = headers.get("Date");
+    Date date = null;
+    try {
+      date = DATE_FORMAT.parse(dateStr);
+    } catch (ParseException e) {
+      e.printStackTrace();
+      throw new IOException(e);
+    }
+
     String body = sb.toString();
     // Contract contractions.
     body = body.replaceAll("'", "");
@@ -115,16 +132,16 @@ public class EmailBulkImporter extends KijiBulkImporter<LongWritable, Text> {
     if (messageId.startsWith("<") && messageId.endsWith(">")) {
       messageId = messageId.substring(1, messageId.length()-2);
     }
-    long ts = System.currentTimeMillis();
-    EntityId eid = kijiTable.getEntityId(messageId);
-    putter.put(eid, "info", "mid", ts, messageId);
-
-    String date = headers.get("Date");
-    if (null != date && !date.isEmpty()) {
-      putter.put(eid, "info", "date", ts, date);
-    }
 
     String from = headers.get("From");
+    long ts = date.getTime();
+
+    // Use the From line and the timestamp of the email as the rowkey.
+    EntityId eid = kijiTable.getEntityId(from, date.getTime());
+    putter.put(eid, "info", "mid", ts, messageId);
+
+    putter.put(eid, "info", "date", ts, date.getTime());
+
     if (null != from && !from.isEmpty()) {
       putter.put(eid, "info", "from", ts, from);
     }
@@ -171,6 +188,7 @@ public class EmailBulkImporter extends KijiBulkImporter<LongWritable, Text> {
     } else {
       count++;
       BufferedReader br = null;
+      //System.out.println("File: " + folder.toString());
 
       try {
         StringBuilder sb = new StringBuilder();
