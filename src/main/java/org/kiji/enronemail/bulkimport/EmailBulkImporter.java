@@ -19,14 +19,12 @@
 
 package org.kiji.enronemail.bulkimport;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -54,6 +52,20 @@ import org.kiji.schema.KijiURI;
  */
 public class EmailBulkImporter extends KijiBulkImporter<LongWritable, Text> {
   private final static DateFormat DATE_FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z (z)");
+
+  public final static class SystemFilenameFilter implements FilenameFilter {
+
+      Set<String> ignoredFiles = new HashSet<String>();
+
+      public SystemFilenameFilter() {
+          ignoredFiles.add(".DS_Store");
+      }
+
+      @Override
+      public boolean accept(File dir, String name) {
+          return !ignoredFiles.contains(name);
+      }
+  }
 
   /** {@inheritDoc} */
   @Override
@@ -180,7 +192,7 @@ public class EmailBulkImporter extends KijiBulkImporter<LongWritable, Text> {
     long count = 0;
     if (folder.isDirectory()) {
       System.out.println("Processing: " + prefix + ": " + folder.toString());
-      File[] files = folder.listFiles();
+      File[] files = folder.listFiles(new SystemFilenameFilter());
       for (int c=0; c<files.length; c++) {
         File file = files[c];
         count += processDirectory(table, putter, file, prefix +  "(" +c + "/" + files.length + ")");
@@ -188,7 +200,7 @@ public class EmailBulkImporter extends KijiBulkImporter<LongWritable, Text> {
     } else {
       count++;
       BufferedReader br = null;
-      //System.out.println("File: " + folder.toString());
+//      System.out.println("File: " + folder.toString());
 
       try {
         StringBuilder sb = new StringBuilder();
