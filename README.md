@@ -7,7 +7,7 @@ The Enron email dataset is a collection of ~500k emails, from ~150 Enron employe
 It is probably one of the largest publically available datasets of "real" emails, which makes it interesting.
 
 * Data collected from: https://www.cs.cmu.edu/~enron/
-** We use the most recent(2009) version of this dataset.
+We use the most recent(2009) version of this dataset.
 * Schema derived from http://www.isi.edu/~adibi/Enron/Enron_Dataset_Report.pdf
 * Sentiment words derived from AFINN: http://www2.imm.dtu.dk/pubdb/views/publication_details.php?id=6010
 
