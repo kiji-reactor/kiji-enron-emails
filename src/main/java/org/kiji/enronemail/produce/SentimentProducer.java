@@ -19,25 +19,25 @@
 
 package org.kiji.enronemail.produce;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.Map;
 
-import com.google.common.collect.Maps;
 import org.apache.avro.Schema;
+import org.apache.hadoop.fs.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.kiji.mapreduce.KijiContext;
+import org.kiji.mapreduce.kvstore.KeyValueStore;
+import org.kiji.mapreduce.kvstore.KeyValueStoreReader;
+import org.kiji.mapreduce.kvstore.RequiredStores;
+import org.kiji.mapreduce.kvstore.lib.TextFileKeyValueStore;
 import org.kiji.mapreduce.produce.KijiProducer;
 import org.kiji.mapreduce.produce.ProducerContext;
 import org.kiji.schema.KijiColumnName;
 import org.kiji.schema.KijiDataRequest;
 import org.kiji.schema.KijiDataRequestBuilder;
 import org.kiji.schema.KijiRowData;
-import org.kiji.schema.util.ResourceUtils;
 
 /**
  * This producer copies data from the column "family:qualifier" to the column
@@ -49,34 +49,20 @@ public class SentimentProducer extends KijiProducer {
   private KijiColumnName mInputColumn = new KijiColumnName("info:body");
   private KijiColumnName mOutputColumn = new KijiColumnName("features:sentiment");
   private Schema schema = Schema.create(Schema.Type.FLOAT);
-  public Map<String, Integer> affinityMap;
 
   /** {@inheritDoc} */
   @Override
   public void setup(KijiContext context) {
+  }
 
-    //FIXME I should use a kv store here, but I'm lazy.
-    affinityMap = Maps.newHashMap();
-    File file = new File("/home/lsheng/project/kijienronemail/AFINN-111.txt");
-    BufferedReader br = null;
-    try {
-      String currentLine;
-
-      br = new BufferedReader(new FileReader(file));
-
-      while ((currentLine = br.readLine()) != null) {
-        String[] fields = currentLine.split("\t");
-        String word = fields[0];
-        Integer value = Integer.parseInt(fields[1]);
-        affinityMap.put(word, value);
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    } finally {
-      if (br != null) {
-        ResourceUtils.closeOrLog(br);
-      }
-    }
+  @Override
+  public Map<String, KeyValueStore<?, ?>> getRequiredStores() {
+    // Note that it's ok to specify a path to an HDFS dir, not just one file.
+    return RequiredStores.just("sentiment", TextFileKeyValueStore.builder()
+        .withDelimiter("\t")
+        .withInputPath(new Path("/tmp/AFINN-111.txt"))
+        .withDistributedCache(false)
+        .build());
   }
 
   /** {@inheritDoc} */
@@ -98,6 +84,7 @@ public class SentimentProducer extends KijiProducer {
   @Override
   public void produce(KijiRowData input, ProducerContext context)
       throws IOException {
+    KeyValueStoreReader<String, String> sentimentStore = context.getStore("sentiment");
     String body = input.getMostRecentValue(mInputColumn.getFamily(), mInputColumn.getQualifier()).toString();
     // replace all non word characters with spaces
     body = body.replaceAll("\\W", " ");
@@ -107,9 +94,9 @@ public class SentimentProducer extends KijiProducer {
     float numWords = 0.0f;
     for (String word : words) {
       word = word.trim();
-      if (affinityMap.containsKey(word)) {
+      if (sentimentStore.containsKey(word)) {
         numWords++;
-        score += affinityMap.get(word);
+        score += Float.valueOf(sentimentStore.get(word));
       }
     }
     long timestamp = System.currentTimeMillis();
@@ -122,8 +109,5 @@ public class SentimentProducer extends KijiProducer {
   }
 
   public static void main(String[] args) {
-    SentimentProducer kp = new SentimentProducer();
-    kp.setup(null);
-    System.out.println(kp.affinityMap);
   }
 }

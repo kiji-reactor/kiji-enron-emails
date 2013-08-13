@@ -16,7 +16,7 @@ It is probably one of the largest publically available datasets of "real" emails
 
     export ENRON_EMAIL_HOME=/path/to/kijienronemail
     export KIJI=kiji://.env/enron_email
-    export LIBS_DIR=${ENRON_EMAIL_HOME}/lib
+    export LIBS_DIR=${ENRON_EMAIL_HOME}/target
     export KIJI_CLASSPATH="${LIBS_DIR}/*"
   
 ### Creating the tables in Kiji:
@@ -27,6 +27,10 @@ It is probably one of the largest publically available datasets of "real" emails
 ### Run the importer:
 
     kiji jar ./target/enronemail-1.0-SNAPSHOT.jar org.kiji.enronemail.bulkimport.EmailBulkImporter kiji://.env/enron_email/emails maildir/
+
+### Copy the sentiment file to HDFS
+
+    hadoop fs -copyFromLocal AFINN-111.txt /tmp
 
 ### Run the sentiment producer:
 
