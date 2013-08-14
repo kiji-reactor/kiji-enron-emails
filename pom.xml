@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.kiji</groupId>
+    <artifactId>kiji-enron-emails</artifactId>
+    <packaging>pom</packaging>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <name>Root POM for Retail Demo</name>
+
+    <modules>
+        <module>hive</module>
+        <module>express</module>
+    </modules>
+
+    <parent>
+        <groupId>org.kiji.pom</groupId>
+        <artifactId>root-pom</artifactId>
+        <version>1.1.2</version>
+    </parent>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <encoding>UTF-8</encoding>
+    </properties>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>kiji-plugins</id>
+            <name>kiji-plugins</name>
+            <url>https://repo.wibidata.com/artifactory/kiji</url>
+        </pluginRepository>
+    </pluginRepositories>
+</project>
