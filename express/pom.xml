@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.kiji</groupId>
+    <artifactId>kiji-express-enron</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <inceptionYear>2013</inceptionYear>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <properties>
+        <kiji.framework.version>1.1.1</kiji.framework.version>
+        <express.version>0.7.0</express.version>
+        <scalatest.version>2.0.M5b</scalatest.version>
+    </properties>
+
+    <parent>
+        <groupId>org.kiji.pom</groupId>
+        <artifactId>root-pom</artifactId>
+        <version>1.1.2</version>
+    </parent>
+
+    <dependencies>
+        <!-- Scala -->
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>2.9.2</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Kiji -->
+        <dependency>
+            <groupId>org.kiji.express</groupId>
+            <artifactId>kiji-express</artifactId>
+            <version>${express.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kiji.framework</groupId>
+            <artifactId>kiji-framework</artifactId>
+            <version>${kiji.framework.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.2</version>
+        </dependency>
+
+        <!-- Testing -->
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_2.9.2</artifactId>
+            <version>2.0.M5b</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kiji.express</groupId>
+            <artifactId>kiji-express</artifactId>
+            <version>${express.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <version>3.1.3</version>
+                <executions>
+                    <execution>
+                        <id>compilation</id>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                        <configuration>
+                            <sendJavaToScalac>false</sendJavaToScalac>
+                            <args>
+                                <arg>-unchecked</arg>
+                                <arg>-explaintypes</arg>
+                            </args>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.scalastyle</groupId>
+                <artifactId>scalastyle-maven-plugin</artifactId>
+                <version>0.2.0</version>
+                <configuration>
+                    <failOnViolation>true</failOnViolation>
+                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                    <failOnWarning>false</failOnWarning>
+                    <sourceDirectory>/var/lib/jenkins/workspace/kiji-express-music/src/main/scala</sourceDirectory>
+                    <testSourceDirectory>/var/lib/jenkins/workspace/kiji-express-music/src/test/scala
+                    </testSourceDirectory>
+                    <configLocation>
+                        /var/lib/jenkins/workspace/kiji-express-music/src/main/scalastyle/scalastyle_config.xml
+                    </configLocation>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- ScalaTest -->
+            <plugin>
+                <groupId>org.scalatest</groupId>
+                <artifactId>scalatest-maven-plugin</artifactId>
+                <version>1.0-M2</version>
+                <configuration>
+                    <reportsDirectory>/var/lib/jenkins/workspace/kiji-express-music/target/surefire-reports
+                    </reportsDirectory>
+                    <junitxml>.</junitxml>
+                    <filereports>WDF TestSuite.txt</filereports>
+                    <systemProperties>
+                        <!-- disable schema validation, since it is currently too strict for KijiExpress. -->
+                        <org.kiji.schema.impl.AvroCellEncoder.SCHEMA_VALIDATION>
+                            DISABLED
+                        </org.kiji.schema.impl.AvroCellEncoder.SCHEMA_VALIDATION>
+                    </systemProperties>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>test</id>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>maven-replacer-plugin</artifactId>
+                <version>${maven-replacer-plugin.version}</version>
+                <configuration>
+                    <!-- Use a regex replace to suppress java compiler warnings
+                         in the generated code.  What a hack, eh? -->
+                    <basedir>${basedir}</basedir>
+                </configuration>
+                <executions>
+                    <execution>
+                        <!--
+                            In all projects, if you generate avro code, then it should have the following
+                            replacement regex run on it.
+                        -->
+                        <id>suppress-avro-warnings</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <!-- This is a relative path because the plugin prefixes ${basedir} for us. -->
+                                <include>target/generated-sources/avro/**/*.java</include>
+                                <include>target/generated-test-sources/avro/**/*.java</include>
+                            </includes>
+                            <regex>false</regex>
+                            <replacements>
+                                <!-- This is a temporary fix until AVRO-1047 is resolved. -->
+                                <replacement>
+                                    <token>@SuppressWarnings("all")</token>
+                                    <value>@SuppressWarnings("unchecked")</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <repositories>
+        <!-- Kiji repositories -->
+        <repository>
+            <id>kiji-repos</id>
+            <name>kiji-repos</name>
+            <url>https://repo.wibidata.com/artifactory/kiji</url>
+        </repository>
+        <repository>
+            <id>kiji-nightly</id>
+            <name>kiji-nightly</name>
+            <url>https://repo.wibidata.com/artifactory/kiji-nightly</url>
+        </repository>
+
+        <!-- ScalaTest -->
+        <repository>
+            <id>Sonatype OSS Repository</id>
+            <url>https://oss.sonatype.org/content/groups/public</url>
+        </repository>
+
+        <!-- Cascading -->
+        <repository>
+            <id>conjars.org</id>
+            <url>http://conjars.org/repo</url>
+        </repository>
+    </repositories>
+
+</project>
