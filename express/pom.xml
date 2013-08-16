@@ -138,33 +138,6 @@
                 </executions>
             </plugin>
 
-            <!-- ScalaTest -->
-            <plugin>
-                <groupId>org.scalatest</groupId>
-                <artifactId>scalatest-maven-plugin</artifactId>
-                <version>1.0-M2</version>
-                <configuration>
-                    <reportsDirectory>/var/lib/jenkins/workspace/kiji-express-music/target/surefire-reports
-                    </reportsDirectory>
-                    <junitxml>.</junitxml>
-                    <filereports>WDF TestSuite.txt</filereports>
-                    <systemProperties>
-                        <!-- disable schema validation, since it is currently too strict for KijiExpress. -->
-                        <org.kiji.schema.impl.AvroCellEncoder.SCHEMA_VALIDATION>
-                            DISABLED
-                        </org.kiji.schema.impl.AvroCellEncoder.SCHEMA_VALIDATION>
-                    </systemProperties>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>test</id>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>

@@ -27,6 +27,20 @@
         <encoding>UTF-8</encoding>
     </properties>
 
+    <repositories>
+        <!-- Kiji repositories -->
+        <repository>
+            <id>kiji-repos</id>
+            <name>kiji-repos</name>
+            <url>https://repo.wibidata.com/artifactory/kiji</url>
+        </repository>
+        <repository>
+            <id>kiji-nightly</id>
+            <name>kiji-nightly</name>
+            <url>https://repo.wibidata.com/artifactory/kiji-nightly</url>
+        </repository>
+    </repositories>
+
     <pluginRepositories>
         <pluginRepository>
             <id>kiji-plugins</id>

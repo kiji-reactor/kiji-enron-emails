@@ -22,17 +22,24 @@ small files like in a Maildir format.
 
 ## Loading the dataset into Kiji:
 
+### Compile everything
+    mvn clean package
+
+### Copy jar to lib dir
+    mkdir hive/lib
+    cp hive/target/*.jar hive/lib
+
 ### Setup the environment:
 
     export ENRON_EMAIL_HOME=/path/to/kijienronemail
     export KIJI=kiji://.env/enron_email
-    export LIBS_DIR=${ENRON_EMAIL_HOME}/target
+    export LIBS_DIR=${ENRON_EMAIL_HOME}/hive/lib
     export KIJI_CLASSPATH="${LIBS_DIR}/*"
   
 ### Creating the tables in Kiji:
 
     kiji install --kiji=${KIJI}
-    kiji-schema-shell --kiji=${KIJI} --file=${ENRON_EMAIL_HOME}/email_schema.ddl
+    kiji-schema-shell --kiji=${KIJI} --file=${ENRON_EMAIL_HOME}/ddl/email_schema.ddl
 
 ### Run the importer:
 
