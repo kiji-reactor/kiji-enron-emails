@@ -66,12 +66,11 @@ class EnronEmailSummaryCompleted(args: Args) extends KijiJob(args) {
   KijiInput(inputUri)(Map(Column("info:from") -> 'fromColumn, Column("info:to") -> 'toColumn))
     // 'recipients actually contains comma separated emails since there can be more than one recipient
     // we need to "explode" this field so we have an email sent from each sender to each recipient
-    // Just in case our input data wasn't completely sanitized we'll do some trimming and make everything lowercase
-    // before we do the split.
-    .flatMap('toColumn -> 'recipients) { recipients: KijiSlice[String] => recipients.cells.map(cell => cell.datum) }
-    .flatMap('fromColumn -> 'sender) { sender: KijiSlice[String] => sender.cells.map(cell => cell.datum.trim.toLowerCase) }
-    .flatMap('recipients -> 'recipient) { recipients: String => recipients.split(",").map(_.trim.toLowerCase) }
-    .discard('toColumn, 'fromColumn, 'recipients)
+    .mapTo(('fromColumn, 'toColumn) -> ('sender, 'recipient)) {
+      columns: (KijiSlice[String], KijiSlice[String]) =>
+      val (fromColumn, toColumn) = columns
+      (fromColumn.getFirstValue(), toColumn.getFirstValue()) }
+    .flatMap('recipient -> 'recipient) { recipients: String => recipients.split(",").map(_.trim.toLowerCase) }
     // Now we can do a proper groupBy and output the size of each group (a count)
     .groupBy('sender, 'recipient) { _.size('emailCount) }
     .groupAll { _.sortBy('emailCount).reverse }
