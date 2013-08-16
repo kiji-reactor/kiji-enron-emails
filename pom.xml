@@ -8,24 +8,50 @@
     <packaging>pom</packaging>
     <version>0.0.1-SNAPSHOT</version>
 
-    <name>Root POM for Retail Demo</name>
+    <name>Root POM for Enron Analysis</name>
 
     <modules>
         <module>hive</module>
         <module>express</module>
+        <module>mr</module>
     </modules>
 
-    <parent>
-        <groupId>org.kiji.pom</groupId>
-        <artifactId>root-pom</artifactId>
-        <version>1.1.2</version>
-    </parent>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <encoding>UTF-8</encoding>
+        <kiji.framework.version>1.1.1</kiji.framework.version>
+        <log4j.version>1.2.16</log4j.version>
     </properties>
+    <dependencies>
+        <!-- Kiji -->
+        <dependency>
+            <groupId>org.kiji.framework</groupId>
+            <artifactId>kiji-framework</artifactId>
+            <version>${kiji.framework.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.2</version>
+        </dependency>
+
+        <!-- Testing -->
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_2.9.2</artifactId>
+            <version>2.0.M5b</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
     <repositories>
         <!-- Kiji repositories -->
