@@ -22,6 +22,7 @@ class TfIdfJob(args: Args) extends KijiJob(args) {
 
   val docWordMatrix =
   KijiInput(inputUri)(Map(Column("info:body") -> 'docColumn))
+  .limit(10)
   .map('entityId -> 'entityId) { entityId: EntityId => entityId.toString() }
   .flatMap('docColumn -> 'doc) { column: KijiSlice[String] => column.cells.map(cell => cell.datum) }
   .flatMap('doc -> 'word) {
@@ -34,12 +35,15 @@ class TfIdfJob(args: Args) extends KijiJob(args) {
 
   // compute the overall document frequency of each row
   val docFreq = docWordMatrix.binarizeAs[Double].sumRowVectors
+  .write(Tsv(outputUri + sep + "overall-doc-freq-matrix"))
 
   // compute the inverse document frequency vector
   val invDocFreqVct = docFreq.toMatrix(1).rowL1Normalize.mapValues( x => log2(1/x) )
+  .write(Tsv(outputUri + sep + "inverse-doc-freq-matrix"))
 
   // zip the row vector along the entire document - word matrix
   val invDocFreqMat = docWordMatrix.zip(invDocFreqVct.getRow(1)).mapValues( pair => pair._2 )
+  .write(Tsv(outputUri + sep + "doc-word-matrix"))
 
   // multiply the term frequency with the inverse document frequency and keep the top nrWords
   docWordMatrix.hProd(invDocFreqMat).topRowElems(10)
