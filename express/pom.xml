@@ -19,8 +19,9 @@
 
     <properties>
         <kiji.framework.version>1.1.1</kiji.framework.version>
-        <express.version>0.7.0</express.version>
+        <express.version>0.8.0-SNAPSHOT</express.version>
         <scalatest.version>2.0.M5b</scalatest.version>
+        <!--<scala.version>2.9.2</scala.version>-->
     </properties>
 
     <parent>
@@ -34,7 +35,7 @@
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
-            <version>2.9.2</version>
+            <version>${scala.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -65,7 +66,7 @@
         <!-- Testing -->
         <dependency>
             <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_2.9.2</artifactId>
+            <artifactId>scalatest_${scala.version}</artifactId>
             <version>2.0.M5b</version>
             <scope>test</scope>
         </dependency>
