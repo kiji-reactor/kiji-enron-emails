@@ -22,7 +22,6 @@ class TfIdfJob(args: Args) extends KijiJob(args) {
 
   val docWordMatrix =
   KijiInput(inputUri)(Map(Column("info:body") -> 'docColumn))
-  .limit(10)
   .map('entityId -> 'entityId) { entityId: EntityId => entityId.toString() }
   .flatMap('docColumn -> 'doc) { column: KijiSlice[String] => column.cells.map(cell => cell.datum) }
   .flatMap('doc -> 'word) {
@@ -33,22 +32,47 @@ class TfIdfJob(args: Args) extends KijiJob(args) {
   .project('entityId, 'word, 'count)
   .toMatrix[String, String, Double]('entityId, 'word, 'count)
 
-  // compute the overall document frequency of each row
+  /**
+   * Compute the overall document frequency of each row
+   *
+   * Example Output:
+   * enron	2.0
+   * ensure	1.0
+   * entail	1.0
+   */
   val docFreq = docWordMatrix.binarizeAs[Double].sumRowVectors
-  .write(Tsv(outputUri + sep + "overall-doc-freq-matrix"))
 
-  // compute the inverse document frequency vector
+  /**
+   * Compute the inverse document frequency vector
+   *
+   * Example Output:
+   * 1	follow	9.603626344986191
+   * 1	formed	9.603626344986191
+   * 1	forms	  9.603626344986191
+   */
   val invDocFreqVct = docFreq.toMatrix(1).rowL1Normalize.mapValues( x => log2(1/x) )
-  .write(Tsv(outputUri + sep + "inverse-doc-freq-matrix"))
 
-  // zip the row vector along the entire document - word matrix
+  /**
+   * Zip the row vector along the entire document - word matrix
+   * This essentially joins the inverse document frequency vector to the term frequency matrix and
+   * then discards the term frequency.
+   *
+   * Example Output:
+   * EntityId(rob.bradley@enron.com,995048400000)	piece	9.603626344986191
+   * EntityId(rob.bradley@enron.com,995048400000)	play	9.603626344986191
+   * EntityId(rob.bradley@enron.com,995048400000)	point	9.603626344986191
+   */
   val invDocFreqMat = docWordMatrix.zip(invDocFreqVct.getRow(1)).mapValues( pair => pair._2 )
-  .write(Tsv(outputUri + sep + "doc-word-matrix"))
 
-  // multiply the term frequency with the inverse document frequency and keep the top nrWords
+  /**
+   * Multiply the term frequency with the inverse document frequency and keep the top 10 words
+   *
+   * Example Output:
+   *
+   */
   docWordMatrix.hProd(invDocFreqMat).topRowElems(10)
 
-  .write(Tsv(outputUri + sep + "doc-word-matrix"))
+  .write(Tsv(outputUri + sep + "tf-idf-matrix"))
 
   def log2(x : Double) = scala.math.log(x)/scala.math.log(2.0)
 
