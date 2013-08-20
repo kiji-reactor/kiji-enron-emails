@@ -42,6 +42,7 @@ class EnronEmailSummary(args: Args) extends KijiJob(args) {
   val topSenders =
     // Configure an input source -- The "from" column in our HBase table mapped to the 'from field in our pipe
     KijiInput(inputUri)(Map(Column("info:from") -> 'from))
+  // TODO Fill me in
 
   topSenders.write(Tsv(outputUri + sep + "top-senders-enron"))
   /**
@@ -50,7 +51,7 @@ class EnronEmailSummary(args: Args) extends KijiJob(args) {
   val topCorresponders =
     // Configure another input source -- The from and to columns are required this time to create pairs of correspondents
     KijiInput(inputUri)(Map(Column("info:from") -> 'fromColumn, Column("info:to") -> 'toColumn))
-
+  // TODO Fill me in
 
   topCorresponders.write(Tsv(outputUri + sep + "top-correspondents-enron"))
 }
