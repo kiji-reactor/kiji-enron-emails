@@ -8,6 +8,7 @@
         <artifactId>kiji-enron-emails</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
+
     <artifactId>express-enron-email</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -44,6 +45,7 @@
             <version>${express.version}</version>
             <scope>provided</scope>
         </dependency>
+
         <!-- Scala -->
         <dependency>
             <groupId>org.scala-lang</groupId>

@@ -20,6 +20,13 @@ class TfIdfJob(args: Args) extends KijiJob(args) {
   val inputUri: String = args("input")
   val outputUri: String = args("output")
 
+  /**
+   *                             word1   word2  ... wordN
+   * Create a matrix of email1 [ count1, count2 ... countN ]
+   *                    email2 [ count1, count2 ... countN ]
+   *                    ...
+   *                    emailN [ count1, count2 ... countN ]
+   */
   val docWordMatrix =
   KijiInput(inputUri)(Map(Column("info:body") -> 'docColumn))
   .map('entityId -> 'entityId) { entityId: EntityId => entityId.toString() }
@@ -33,7 +40,7 @@ class TfIdfJob(args: Args) extends KijiJob(args) {
   .toMatrix[String, String, Double]('entityId, 'word, 'count)
 
   /**
-   * Compute the overall document frequency of each row
+   * Compute the document frequency of each row
    *
    * Example Output:
    * enron	2.0
@@ -61,17 +68,11 @@ class TfIdfJob(args: Args) extends KijiJob(args) {
    * EntityId(rob.bradley@enron.com,995048400000)	piece	9.603626344986191
    * EntityId(rob.bradley@enron.com,995048400000)	play	9.603626344986191
    * EntityId(rob.bradley@enron.com,995048400000)	point	9.603626344986191
-   */
-  val invDocFreqMat = docWordMatrix.zip(invDocFreqVct.getRow(1)).mapValues( pair => pair._2 )
+   */                                                          // Effectively element-wise multiply of the two matrices
+  val invDocFreqMat = docWordMatrix.zip(invDocFreqVct.getRow(1)).mapValues( pair => pair._1 * pair._2 )
 
-  /**
-   * Multiply the term frequency with the inverse document frequency and keep the top 10 words
-   *
-   * Example Output:
-   *
-   */
-  docWordMatrix.hProd(invDocFreqMat).topRowElems(10)
-
+  //  docWordMatrix.hProd(invDocFreqMat).topRowElems(10)
+  .topRowElems(10) // Save only the top ten highest scoring words
   .write(Tsv(outputUri + sep + "tf-idf-matrix"))
 
   def log2(x : Double) = scala.math.log(x)/scala.math.log(2.0)
