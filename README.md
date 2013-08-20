@@ -43,7 +43,7 @@ small files like in a Maildir format.
 
 ### Run the importer:
 
-    kiji jar ./target/enronemail-1.0-SNAPSHOT.jar org.kiji.enronemail.bulkimport.EmailBulkImporter kiji://.env/enron_email/emails maildir/
+    kiji jar ./mr/target/mr-enron-email-1.0-SNAPSHOT.jar org.kiji.enronemail.bulkimport.EmailBulkImporter kiji://.env/enron_email/emails maildir/
 
 ### Copy the sentiment file to HDFS
 
