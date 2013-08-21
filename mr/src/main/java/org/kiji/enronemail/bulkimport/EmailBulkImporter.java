@@ -44,7 +44,7 @@ import java.util.Set;
  * and value, and override the produce method, using methods of <code>context</code> to write
  * your results.
  */
-public class EmailBulkImporter extends KijiBulkImporter<LongWritable, Text> {
+public class EmailBulkImporter {
     private final static DateFormat DATE_FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z (z)");
 
     private static final String FAMILY = "sent_messages";
@@ -63,31 +63,8 @@ public class EmailBulkImporter extends KijiBulkImporter<LongWritable, Text> {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setup(KijiTableContext context) throws IOException {
-        // TODO: Perform any setup you need here.
-        super.setup(context);
-    }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void produce(LongWritable filePos, Text value, KijiTableContext context)
-            throws IOException {
 
-        System.out.println(value.toString());
-
-        final String[] split = value.toString().split(":");
-        final String rowKey = split[0];
-        final int integerValue = Integer.parseInt(split[1]);
-
-        final EntityId eid = context.getEntityId(rowKey);
-        context.put(eid, "primitives", "int", integerValue);
-    }
 
     public static void produceHelper(String message, KijiTable kijiTable, KijiPutter putter) throws IOException {
         final String[] lines = message.split("\n");
@@ -181,14 +158,7 @@ public class EmailBulkImporter extends KijiBulkImporter<LongWritable, Text> {
         putter.put(eid, FAMILY, "body", ts, body);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void cleanup(KijiTableContext context) throws IOException {
-        // TODO: Perform any cleanup you need here.
-        super.cleanup(context);
-    }
+
 
     public static long processDirectory(KijiTable table, KijiPutter putter, File folder, String prefix) {
         long count = 0;

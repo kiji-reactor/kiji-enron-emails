@@ -59,9 +59,9 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>2.2</version>
+            <groupId>org.scalaj</groupId>
+            <artifactId>scalaj-time_2.9.0-1</artifactId>
+            <version>0.7</version>
         </dependency>
 
         <!-- Testing -->
