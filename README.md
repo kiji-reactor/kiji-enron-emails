@@ -53,5 +53,10 @@ small files like in a Maildir format.
 
     kiji produce --producer=org.kiji.enronemail.produce.SentimentProducer --input="format=kiji table=${KIJI}/emails" --output="format=kiji table=${KIJI}/emails nsplits=2" --lib=${LIBS_DIR}
 
+### Running the completed Email Summary Express job:
 
+    express job express/target/express-enron-email-0.0.1-SNAPSHOT-release/express-enron-email-0.0.1-SNAPSHOT/lib/express-enron-email-0.0.1-SNAPSHOT.jar org.kiji.enronemail.job.EnronEmailSummaryCompleted -Dmapred.child.java.opts="-Xmx512m" --input kiji://.env/enron_email/emails --output . --hdfs --libjars lib
+    
+### Running the TfIdf Express job:
 
+    express job express/target/express-enron-email-0.0.1-SNAPSHOT-release/express-enron-email-0.0.1-SNAPSHOT/lib/express-enron-email-0.0.1-SNAPSHOT.jar org.kiji.enronemail.job.EnronEmailTfIdfCompleted -Dmapred.child.java.opts="-Xmx512m" --input kiji://.env/enron_email/emails --output . --hdfs --libjars lib
