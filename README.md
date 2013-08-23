@@ -60,3 +60,9 @@ small files like in a Maildir format.
 ### Running the TfIdf Express job:
 
     express job express/target/express-enron-email-0.0.1-SNAPSHOT-release/express-enron-email-0.0.1-SNAPSHOT/lib/express-enron-email-0.0.1-SNAPSHOT.jar org.kiji.enronemail.job.EnronEmailTfIdfCompleted -Dmapred.child.java.opts="-Xmx512m" --input kiji://.env/enron_email/emails --output . --hdfs --libjars lib
+
+### Viewing the output of the Express jobs
+
+    hadoop fs -cat top-senders-enron/part-00000 OR hadoop fs -getmerge top-senders-enron top-senders-enron.txt
+    hadoop fs -cat top-correspondents-enron/part-00000 OR hadoop fs -getmerge top-correspondents-enron top-correspondents-enron.txt
+    hadoop fs -cat tf-idf-matrix/part-00000 OR hadoop fs -getmerge tf-idf-matrix tf-idf-matrix.txt
