@@ -35,6 +35,7 @@ small files like in a Maildir format.
     export KIJI=kiji://.env/enron_email
     export LIBS_DIR=${ENRON_EMAIL_HOME}/hive/lib
     export KIJI_CLASSPATH="${LIBS_DIR}/*"
+    export EXPRESS_JOB_ROOT=${PWD}/express/target/express-enron-email-0.0.1-SNAPSHOT-release/express-enron-email-0.0.1-SNAPSHOT
   
 ### Creating the tables in Kiji:
 
@@ -54,14 +55,16 @@ small files like in a Maildir format.
     kiji produce --producer=org.kiji.enronemail.produce.SentimentProducer --input="format=kiji table=${KIJI}/emails" --output="format=kiji table=${KIJI}/emails nsplits=2" --lib=${LIBS_DIR}
 
 ### Run the SingleEmployeeActivitySeries
+
+    express job ${EXPRESS_JOB_ROOT}/lib/express-enron-email-0.0.1-SNAPSHOT.jar org.kiji.enronemail.job.SingleEmployeeActivitySeries -Dmapred.child.java.opts="-Xmx512m" --input ${KIJI}/employee --output agg-activity-time-series --hdfs --libjars ${EXPRESS_JOB_ROOT}/lib
     express job --lib-jars ".express/target/express-enron-email-0.0.1-SNAPSHOT.jar" .express/target/express-enron-email-0.0.1-SNAPSHOT.jar org.kiji.enronemail.job.SingleEmployeeActivitySeries --input ${KIJI}/employee --output agg-activity-time-series --hdfs
 
 ### Running the completed Email Summary Express job:
-    express job express/target/express-enron-email-0.0.1-SNAPSHOT-release/express-enron-email-0.0.1-SNAPSHOT/lib/express-enron-email-0.0.1-SNAPSHOT.jar org.kiji.enronemail.job.EnronEmailSummaryCompleted -Dmapred.child.java.opts="-Xmx512m" --input kiji://.env/enron_email/emails --output . --hdfs --libjars lib
+    express job ${EXPRESS_JOB_ROOT}/lib/express-enron-email-0.0.1-SNAPSHOT.jar org.kiji.enronemail.job.EnronEmailSummaryCompleted -Dmapred.child.java.opts="-Xmx512m" --input ${KIJI}/emails --output . --hdfs --libjars ${EXPRESS_JOB_ROOT}/lib
     
 ### Running the TfIdf Express job:
 
-    express job express/target/express-enron-email-0.0.1-SNAPSHOT-release/express-enron-email-0.0.1-SNAPSHOT/lib/express-enron-email-0.0.1-SNAPSHOT.jar org.kiji.enronemail.job.EnronEmailTfIdfCompleted -Dmapred.child.java.opts="-Xmx512m" --input kiji://.env/enron_email/emails --output . --hdfs --libjars lib
+    express job ${EXPRESS_JOB_ROOT}/lib/express-enron-email-0.0.1-SNAPSHOT.jar org.kiji.enronemail.job.EnronEmailTfIdfCompleted -Dmapred.child.java.opts="-Xmx512m" --input ${KIJI}/emails --output . --hdfs --libjars ${EXPRESS_JOB_ROOT}/lib
 
 ### Viewing the output of the Express jobs
 

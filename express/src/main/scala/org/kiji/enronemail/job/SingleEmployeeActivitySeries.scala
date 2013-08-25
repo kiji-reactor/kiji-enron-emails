@@ -12,11 +12,11 @@ class SingleEmployeeActivitySeries(args: Args) extends KijiJob(args) {
   val sep = java.io.File.separatorChar
 
   // Parse arguments
-  val inputUri: String = args("input")// This should be the 'employee' table
+  val inputUri: String = args("input") // This should be the 'employee' table
   val outputUri: String = args("output")
 
 
-  val emailsByHour = KijiInput(inputUri)(Map(Column("sent_messages:to").withPaging(10) -> 'to))
+  val emailsByHour = KijiInput(inputUri)(Map(Column("sent_messages:to") -> 'to))
     .map('to -> 'to){
       toSlice: KijiSlice[CharSequence] => // now, each sender has a tuple associated with every
       // email they have sent.
@@ -24,7 +24,7 @@ class SingleEmployeeActivitySeries(args: Args) extends KijiJob(args) {
     .map('to -> 'time){
       cell: Cell[CharSequence] =>
       val dateTime = new DateTime(cell.version)
-      dateTime.hourOfDay.get}// the hour of the day this email was sent, as an Int.
+      dateTime.hourOfDay.get} // the hour of the day this email was sent, as an Int.
      .discard('to)
 
   val emailCountByHour = emailsByHour.groupBy('time) { group => group.size } // count how many emails get sent an hour
