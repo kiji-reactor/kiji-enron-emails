@@ -15,7 +15,7 @@ class PairedEmployeeActivityTimeSeries(args: Args) extends KijiJob(args) {
   val outputUri: String = args("output")
 
   val fromToTimeTriples = KijiInput(inputUri)(Map(Column("info:to") -> 'to))
-    .map('entityId -> 'fromId){eId: EntityId => eId(0)}.discard('entityID) // retrieve the email
+    .map('entityId -> 'fromId){eId: EntityId => eId(0)}.discard('entityId) // retrieve the email
       // identifier of the sender
     .flatMap('to -> 'to){
       toSlice: KijiSlice[CharSequence] => // now, each sender has a tuple for every  email they have sent.
@@ -25,7 +25,7 @@ class PairedEmployeeActivityTimeSeries(args: Args) extends KijiJob(args) {
         val dateTime = new DateTime(cell.version)
         (cell.datum, dateTime.hourOfDay())
     }.discard('to)
-  fromToTimeTriples.groupBy('from, 'to, 'hourOfDay){group => group.size}
+  fromToTimeTriples.groupBy('fromId, 'toId, 'hourOfDay){group => group.size}
       .write(Tsv(outputUri))
 
 }
