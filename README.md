@@ -31,9 +31,11 @@ small files like in a Maildir format.
 
 ### Setup the environment:
 
-    export ENRON_EMAIL_HOME=/path/to/kijienronemail
+From the enron emails directory
+
+    export ENRON_EMAIL_HOME=`pwd`
     export KIJI=kiji://.env/enron_email
-    export LIBS_DIR=${ENRON_EMAIL_HOME}/hive/lib
+    export LIBS_DIR=${ENRON_EMAIL_HOME}/mr/target
     export KIJI_CLASSPATH="${LIBS_DIR}/*"
     export EXPRESS_JOB_ROOT=${PWD}/express/target/express-enron-email-0.0.1-SNAPSHOT-release/express-enron-email-0.0.1-SNAPSHOT
   
@@ -48,7 +50,7 @@ small files like in a Maildir format.
 
 ### Copy the sentiment file to HDFS
 
-    hadoop fs -copyFromLocal AFINN-111.txt /tmp
+    hadoop fs -copyFromLocal hive/AFINN-111.txt /tmp
 
 ### Run the sentiment producer:
 
