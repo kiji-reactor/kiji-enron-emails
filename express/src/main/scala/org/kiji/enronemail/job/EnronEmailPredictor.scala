@@ -38,24 +38,15 @@ class EnronEmailPredictor(args: Args) extends KijiJob(args) {
     .groupBy('first, 'second) {
     _.toList[Long]('timestamp -> 'timestamps)
   }
-    .map('timestamps -> 'deltas) {
+    .map('timestamps -> 'avgDelta) {
     timestamps: List[Long] =>
 
-      for (i <- 1 until timestamps.size) yield {
+      val deltas = for (i <- 1 until timestamps.size) yield {
         timestamps(i - 1) - timestamps(i)
       }
+
+      deltas.sum / deltas.size
   }
-    .project('first, 'second, 'timestamps, 'deltas)
-    .groupAll {
-    _.sortWithTake[(String, String, List[Long], Vector[Long])](('first, 'second, 'timestamps, 'deltas) -> 'top, 10) {
-      (t0: (String, String, List[Long], Vector[Long]), t1: (String, String, List[Long], Vector[Long])) =>
-        t0._3.size > t1._3.size
-    }
-  }
-    .flattenTo[(String,String, List[Long], Vector[Long])]('top -> ('first, 'second, 'timestamps, 'deltas))
-    .map('timestamps -> 'timestamps) { timestamps: List[Long] => timestamps.map(_.toString).reduceLeft[String] { (acc, n) =>
-      acc + ", " + n }}
-    .map('deltas -> 'deltas) { deltas: Vector[Long] => deltas.map(_.toString).reduceLeft[String] { (acc, n) =>
-      acc + ", " + n }}
-    .write(Tsv(outputUri + sep + "top-correspondents-enron"))
+    .project('first, 'second, 'avgDelta)
+    .write(Tsv(outputUri + sep + "prediction-table-enron"))
 }
