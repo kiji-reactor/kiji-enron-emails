@@ -49,8 +49,13 @@ class EnronEmailPredictor(args: Args) extends KijiJob(args) {
     .groupAll {
     _.sortWithTake[(String, String, List[Long], List[Long])](('first, 'second, 'timestamps, 'deltas) -> 'top, 10) {
       (t0: (String, String, List[Long], List[Long]), t1: (String, String, List[Long], List[Long])) =>
-        t0._3.size < t1._3.size
+        t0._3.size > t1._3.size
     }
   }
+    .flattenTo[(String,String, List[Long], List[Long])]('top -> ('first, 'second, 'timestamps, 'deltas))
+    .map('timestamps -> 'timestamps) { timestamps: List[Long] => timestamps.reduceLeft[String] { (acc, n) =>
+      acc + ", " + n }}
+    .map('deltas -> 'deltas) { timestamps: List[Long] => timestamps.reduceLeft[String] { (acc, n) =>
+    acc + ", " + n }}
     .write(Tsv(outputUri + sep + "top-correspondents-enron"))
 }
