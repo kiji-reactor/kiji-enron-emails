@@ -47,15 +47,15 @@ class EnronEmailPredictor(args: Args) extends KijiJob(args) {
   }
     .project('first, 'second, 'timestamps, 'deltas)
     .groupAll {
-    _.sortWithTake[(String, String, List[Long], List[Long])](('first, 'second, 'timestamps, 'deltas) -> 'top, 10) {
-      (t0: (String, String, List[Long], List[Long]), t1: (String, String, List[Long], List[Long])) =>
+    _.sortWithTake[(String, String, List[Long], Vector[Long])](('first, 'second, 'timestamps, 'deltas) -> 'top, 10) {
+      (t0: (String, String, List[Long], Vector[Long]), t1: (String, String, List[Long], Vector[Long])) =>
         t0._3.size > t1._3.size
     }
   }
-    .flattenTo[(String,String, List[Long], List[Long])]('top -> ('first, 'second, 'timestamps, 'deltas))
+    .flattenTo[(String,String, List[Long], Vector[Long])]('top -> ('first, 'second, 'timestamps, 'deltas))
     .map('timestamps -> 'timestamps) { timestamps: List[Long] => timestamps.map(_.toString).reduceLeft[String] { (acc, n) =>
       acc + ", " + n }}
-    .map('deltas -> 'deltas) { deltas: List[Long] => deltas.map(_.toString).reduceLeft[String] { (acc, n) =>
+    .map('deltas -> 'deltas) { deltas: Vector[Long] => deltas.map(_.toString).reduceLeft[String] { (acc, n) =>
       acc + ", " + n }}
     .write(Tsv(outputUri + sep + "top-correspondents-enron"))
 }
