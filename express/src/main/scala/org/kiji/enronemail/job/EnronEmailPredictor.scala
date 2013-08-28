@@ -38,6 +38,7 @@ class EnronEmailPredictor(args: Args) extends KijiJob(args) {
     .groupBy('first, 'second) {
     _.toList[Long]('timestamp -> 'timestamps)
   }
+    .filter('timestamps) { timestamps: List[Long] => timestamps.size > 0}
     .map('timestamps -> 'avgDelta) {
     timestamps: List[Long] =>
 
