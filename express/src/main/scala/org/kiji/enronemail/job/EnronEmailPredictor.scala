@@ -53,9 +53,9 @@ class EnronEmailPredictor(args: Args) extends KijiJob(args) {
     }
   }
     .flattenTo[(String,String, List[Long], List[Long])]('top -> ('first, 'second, 'timestamps, 'deltas))
-    .map('timestamps -> 'timestamps) { timestamps: List[Long] => timestamps.reduceLeft[String] { (acc, n) =>
+    .map('timestamps -> 'timestamps) { timestamps: List[Long] => timestamps.map(_.toString).reduceLeft[String] { (acc, n) =>
       acc + ", " + n }}
-    .map('deltas -> 'deltas) { timestamps: List[Long] => timestamps.reduceLeft[String] { (acc, n) =>
-    acc + ", " + n }}
+    .map('deltas -> 'deltas) { deltas: List[Long] => deltas.map(_.toString).reduceLeft[String] { (acc, n) =>
+      acc + ", " + n }}
     .write(Tsv(outputUri + sep + "top-correspondents-enron"))
 }
