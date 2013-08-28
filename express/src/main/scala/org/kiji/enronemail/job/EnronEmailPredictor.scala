@@ -18,10 +18,10 @@ class EnronEmailPredictor(args: Args) extends KijiJob(args) {
   val outputUri: String = args("output")
 
   KijiInput(inputUri)(Map(Column("info:from") -> 'from, Column("info:to") -> 'to, Column("info:date") -> 'timestamp))
-    .mapTo(('from, 'to) ->('from, 'to)) {
-    columns: (KijiSlice[String], KijiSlice[String]) =>
-      val (fromColumn, toColumn) = columns
-      (fromColumn.getFirstValue(), toColumn.getFirstValue())
+    .mapTo(('from, 'to, 'timestamp) ->('from, 'to, 'timestamp)) {
+    columns: (KijiSlice[String], KijiSlice[String], KijiSlice[Long]) =>
+      val (fromColumn, toColumn, timestamp) = columns
+      (fromColumn.getFirstValue(), toColumn.getFirstValue(), timestamp.getFirstValue())
   }
     .flatMap('to -> 'to) {
     recipients: String => recipients.split(",").map(_.trim.toLowerCase)
