@@ -50,7 +50,9 @@ public class SentimentProducer extends KijiProducer {
   private KijiColumnName mOutputColumn = new KijiColumnName("features:sentiment");
   private Schema schema = Schema.create(Schema.Type.FLOAT);
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void setup(KijiContext context) {
   }
@@ -65,7 +67,9 @@ public class SentimentProducer extends KijiProducer {
         .build());
   }
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public KijiDataRequest getDataRequest() {
     KijiDataRequestBuilder builder = KijiDataRequest.builder();
@@ -74,13 +78,17 @@ public class SentimentProducer extends KijiProducer {
     return builder.build();
   }
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public String getOutputColumn() {
     return mOutputColumn.toString();
   }
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void produce(KijiRowData input, ProducerContext context)
       throws IOException {
@@ -100,7 +108,7 @@ public class SentimentProducer extends KijiProducer {
       }
     }
     long timestamp = System.currentTimeMillis();
-    if(numWords > 0) {
+    if (numWords > 0) {
       score = score / numWords;
       context.put(timestamp, score);
     } else {

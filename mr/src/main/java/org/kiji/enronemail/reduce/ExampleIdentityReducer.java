@@ -37,17 +37,17 @@ import org.kiji.mapreduce.avro.AvroValueWriter;
 
 /**
  * This MapReduce reducer will pass through all of the input key-value pairs unchanged.
- *
+ * <p/>
  * <p>
  * The key and value types here are both the Avro record ExampleRecord.
  * </p>
- *
+ * <p/>
  * <p>
  * To implement your own Reducer, extend KijiReducer with the type parameters for your input
  * and output keys and values, and override the reduce method.  You can also override the
  * <code>setup</code> and <code>cleanup</code> methods if necessary.
  * </p>
- *
+ * <p/>
  * <p>
  * If your any of your input or output key or value types aren't Avro records,
  * you don't need to implement the AvroKeyReader, AvroKeyWriter, etc, interfaces.
@@ -56,54 +56,68 @@ import org.kiji.mapreduce.avro.AvroValueWriter;
 @ApiAudience.Public
 public final class ExampleIdentityReducer
     extends KijiReducer<
-        AvroKey<ExampleRecord>,
-        AvroValue<ExampleRecord>,
-        AvroKey<ExampleRecord>,
-        AvroValue<ExampleRecord>>
+    AvroKey<ExampleRecord>,
+    AvroValue<ExampleRecord>,
+    AvroKey<ExampleRecord>,
+    AvroValue<ExampleRecord>>
     implements AvroKeyReader, AvroValueReader, AvroKeyWriter, AvroValueWriter {
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   protected void reduce(
-        AvroKey<ExampleRecord> key,
-        Iterable<AvroValue<ExampleRecord>> values,
-        Context context) throws IOException, InterruptedException {
+      AvroKey<ExampleRecord> key,
+      Iterable<AvroValue<ExampleRecord>> values,
+      Context context) throws IOException, InterruptedException {
     for (AvroValue<ExampleRecord> value : values) {
       context.write(key, value);
     }
   }
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Class<?> getOutputKeyClass() {
     return AvroKey.class;
   }
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Class<?> getOutputValueClass() {
     return AvroValue.class;
   }
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Schema getAvroKeyReaderSchema() throws IOException {
     return ExampleRecord.SCHEMA$;
   }
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Schema getAvroValueReaderSchema() throws IOException {
     return ExampleRecord.SCHEMA$;
   }
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Schema getAvroKeyWriterSchema() throws IOException {
     return ExampleRecord.SCHEMA$;
   }
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Schema getAvroValueWriterSchema() throws IOException {
     return ExampleRecord.SCHEMA$;

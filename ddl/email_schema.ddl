@@ -1,4 +1,4 @@
-CREATE TABLE emails WITH DESCRIPTION 'Enron emails by user'
+CREATE TABLE emails WITH DESCRIPTION 'Enron emails by sender and timestamp'
 ROW KEY FORMAT (from STRING, timestamp LONG)
 WITH LOCALITY GROUP default
   WITH DESCRIPTION 'Main locality group' (
@@ -20,7 +20,6 @@ WITH LOCALITY GROUP default
     sentiment "float" WITH DESCRIPTION 'sentiment score'
   )
 );
-
 
 CREATE TABLE employee WITH DESCRIPTION 'Enron emails by sender'
 ROW KEY FORMAT (employee STRING)

@@ -46,7 +46,9 @@ public class ExampleProducer extends KijiProducer {
   private KijiColumnName mOutputColumn = new KijiColumnName("family:outputqualifier");
   private Schema schema = Schema.create(Schema.Type.BYTES);
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public KijiDataRequest getDataRequest() {
     KijiDataRequestBuilder builder = KijiDataRequest.builder();
@@ -55,13 +57,17 @@ public class ExampleProducer extends KijiProducer {
     return builder.build();
   }
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public String getOutputColumn() {
     return mOutputColumn.toString();
   }
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void produce(KijiRowData input, ProducerContext context)
       throws IOException {

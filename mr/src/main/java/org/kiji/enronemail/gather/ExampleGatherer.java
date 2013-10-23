@@ -40,7 +40,7 @@ import org.kiji.schema.KijiRowData;
 
 /**
  * Example gatherer.
- *
+ * <p/>
  * <p>
  * This gatherer emits a pair of the input text and the number 1. This is a pattern
  * often used while counting.
@@ -61,16 +61,24 @@ public class ExampleGatherer
     implements AvroKeyWriter, AvroValueWriter {
   private static final Logger LOG = LoggerFactory.getLogger(ExampleGatherer.class);
 
-  /** The family:qualifier of the column to read in. **/
+  /**
+   * The family:qualifier of the column to read in. *
+   */
   private static final String COLUMN_FAMILY = "your_column_family";
   private static final String COLUMN_QUALIFIER = "your_column_qualifier";
 
-  /** Only keep one ExampleRecord around to reduce the chance of a garbage collection pause.*/
+  /**
+   * Only keep one ExampleRecord around to reduce the chance of a garbage collection pause.
+   */
   private ExampleRecord mRecord;
-  /** Only keep one LongWritable object around to reduce the chance of a garbage collection pause.*/
+  /**
+   * Only keep one LongWritable object around to reduce the chance of a garbage collection pause.
+   */
   private static final LongWritable ONE = new LongWritable(1);
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Class<?> getOutputKeyClass() {
     // Since our output key class is AvroKey, we also have to override
@@ -78,7 +86,9 @@ public class ExampleGatherer
     return AvroKey.class;
   }
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Class<?> getOutputValueClass() {
     // TODO: If you want the value to be AvroValue, you will have to override
@@ -86,16 +96,20 @@ public class ExampleGatherer
     return LongWritable.class;
   }
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void setup(
       GathererContext<AvroKey<ExampleRecord>,
-      LongWritable> context) throws IOException {
+          LongWritable> context) throws IOException {
     super.setup(context); // Any time you override setup, call super.setup(context);
     mRecord = new ExampleRecord();
   }
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public KijiDataRequest getDataRequest() {
     // This method is how we specify which columns in each row the gatherer operates on.
@@ -107,7 +121,9 @@ public class ExampleGatherer
     return builder.build();
   }
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void gather(KijiRowData row, GathererContext<AvroKey<ExampleRecord>, LongWritable> context)
       throws IOException {
@@ -122,14 +138,18 @@ public class ExampleGatherer
 
   }
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Schema getAvroKeyWriterSchema() {
     // Since the class of our key is AvroKey, we specify here which schema to use.
     return ExampleRecord.SCHEMA$;
   }
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public Schema getAvroValueWriterSchema() {
     // TODO: If getOutputValueClass returns AvroValue, you must override this method

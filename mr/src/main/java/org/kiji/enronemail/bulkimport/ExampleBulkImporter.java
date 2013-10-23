@@ -30,32 +30,38 @@ import org.kiji.schema.EntityId;
 
 /**
  * This example bulk importer parses colon-delimited mappings of strings to integers.
- *
+ * <p/>
  * To write your own bulk importer class, change the type parameters to those of your key
  * and value, and override the produce method, using methods of <code>context</code> to write
  * your results.
  */
 public class ExampleBulkImporter extends KijiBulkImporter<LongWritable, Text> {
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void setup(KijiTableContext context) throws IOException {
     // TODO: Perform any setup you need here.
     super.setup(context);
   }
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   */
   @Override
-   public void produce(LongWritable filePos, Text value, KijiTableContext context)
-       throws IOException {
-     final String[] split = value.toString().split(":");
-     final String rowKey = split[0];
-     final int integerValue = Integer.parseInt(split[1]);
+  public void produce(LongWritable filePos, Text value, KijiTableContext context)
+      throws IOException {
+    final String[] split = value.toString().split(":");
+    final String rowKey = split[0];
+    final int integerValue = Integer.parseInt(split[1]);
 
-     final EntityId eid = context.getEntityId(rowKey);
-     context.put(eid, "primitives", "int", integerValue);
-   }
+    final EntityId eid = context.getEntityId(rowKey);
+    context.put(eid, "primitives", "int", integerValue);
+  }
 
-  /** {@inheritDoc} */
+  /**
+   * {@inheritDoc}
+   */
   @Override
   public void cleanup(KijiTableContext context) throws IOException {
     // TODO: Perform any cleanup you need here.
