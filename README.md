@@ -1,6 +1,8 @@
 Kiji Enron Emails Dataset
 =========================
 
+This repository was the source of the work done for this presentation: [Exploring the Enron Email Dataset with Kiji and Hive](http://www.slideshare.net/wibidata/exploring-the-enron-email-dataset-with-kiji-and-hive)
+
 ## Background Information:
 
 The Enron email dataset is a collection of ~500k emails, from ~150 Enron employees(mostly senior management).
